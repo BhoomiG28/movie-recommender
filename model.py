@@ -11,6 +11,8 @@ credits = pd.read_csv("tmdb_5000_credits.csv")
 
 # Merge datasets
 movies = movies.merge(credits, on="title")
+# Keep only top 2000 movies to reduce memory
+movies = movies.head(2000)
 
 # Keep only useful columns
 movies = movies[["movie_id", "title", "overview", "genres", "keywords", "cast", "crew"]]
