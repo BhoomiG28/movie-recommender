@@ -2,8 +2,14 @@ from flask import Flask, render_template, request
 import pickle
 import requests
 import os
+import subprocess
 
 app = Flask(__name__)
+
+# Auto generate model if pkl files don't exist
+if not os.path.exists("movies.pkl") or not os.path.exists("similarity.pkl"):
+    print("Generating model files...")
+    subprocess.run(["python", "model.py"])
 
 movies = pickle.load(open("movies.pkl", "rb"))
 similarity = pickle.load(open("similarity.pkl", "rb"))
