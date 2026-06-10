@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineMatch — Movie Recommender</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0f0f0f;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        nav {
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to bottom, #000, transparent);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #e50914;
+            letter-spacing: 1px;
+        }
+
+        .logo span { color: #fff; }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(90deg, #e50914, #ff6b6b, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+
+        /* SEARCH */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+
+        select {
+            padding: 16px 24px;
+            border-radius: 50px;
+            border: 2px solid #333;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 16px;
+            width: 380px;
+            cursor: pointer;
+            outline: none;
+            transition: border 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+        }
+
+        select:focus { border-color: #e50914; }
+
+        button {
+            padding: 16px 40px;
+            border-radius: 50px;
+            border: none;
+            background: #e50914;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: #ff1f2e;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+        }
+
+        /* RESULTS */
+        .results-section {
+            padding: 60px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .results-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .results-title span { color: #e50914; }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .movie-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid #222;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(229, 9, 20, 0.2);
+            border-color: #e50914;
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .movie-info {
+            padding: 14px;
+        }
+
+        .movie-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-state .icon { font-size: 80px; margin-bottom: 20px; }
+
+        .empty-state h2 {
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p { color: #666; font-size: 16px; }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #444;
+            font-size: 14px;
+            border-top: 1px solid #1a1a1a;
+            margin-top: 40px;
+        }
+
+        footer span { color: #e50914; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Cine<span>Match</span></div>
+    </nav>
+
+    <div class="hero">
+        <h1>Find Your Next Favourite Movie</h1>
+        <p>Select a movie and we'll recommend 5 similar movies you'll love</p>
+
+        <form method="POST" action="/">
+            <div class="search-container">
+                <select name="movie" required>
+                    <option value="" disabled selected>🎬 Search a movie...</option>
+                    {% for movie in movies %}
+                        <option value="{{ movie }}"
+                            {% if movie == searched_movie %}selected{% endif %}>
+                            {{ movie }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">✨ Recommend</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="results-section">
+        {% if recommendations %}
+            <div class="results-title">
+                Because you liked <span>{{ searched_movie }}</span>, you might love:
+            </div>
+            <div class="movies-grid">
+                {% for movie in recommendations %}
+                    <div class="movie-card">
+                        <img src="{{ movie.poster }}"
+                             alt="{{ movie.title }}"
+                             onerror="this.src='https://via.placeholder.com/500x750?text=No+Poster'">
+                        <div class="movie-info">
+                            <div class="movie-title">{{ movie.title }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                <div class="icon">🎬</div>
+                <h2>Discover Amazing Movies</h2>
+                <p>Select any movie above to get personalised recommendations</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        Built with ❤️ by <span>Bhoomi Garg</span> &nbsp;|&nbsp; Powered by TMDB API
+    </footer>
+
+</body>
+</html>
