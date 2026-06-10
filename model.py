@@ -71,4 +71,4 @@ pickle.dump(df, open("movies.pkl", "wb"))
 pickle.dump(similarity, open("similarity.pkl", "wb"))
 
 print("Total movies:", len(df))
-print("Model saved successfully!")
+print("Model saved!")

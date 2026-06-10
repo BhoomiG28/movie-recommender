@@ -3,6 +3,10 @@ import pickle
 import requests
 import os
 
+if not os.path.exists("similarity.pkl") or not os.path.exists("movies.pkl"):
+    print("Generating model files...")
+    exec(open("model.py").read())
+
 app = Flask(__name__)
 
 movies = pickle.load(open("movies.pkl", "rb"))
